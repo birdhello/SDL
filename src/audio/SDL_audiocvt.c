@@ -20,6 +20,8 @@
 */
 #include "../SDL_internal.h"
 
+#include <assert.h>
+
 /* Functions for audio drivers to perform runtime conversion of audio format */
 
 /* FIXME: Channel weights when converting from more channels to fewer may need to be adjusted, see https://msdn.microsoft.com/en-us/library/windows/desktop/ff819070(v=vs.85).aspx
@@ -67,7 +69,7 @@ SDL_ConvertStereoToMono_SSE3(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     int i = cvt->len_cvt / 8;
 
     LOG_DEBUG_CONVERT("stereo", "mono (using SSE3)");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     /* Do SSE blocks as long as we have 16 bytes available.
        Just use unaligned load/stores, if the memory at runtime is
@@ -99,7 +101,7 @@ SDL_ConvertStereoToMono(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     int i;
 
     LOG_DEBUG_CONVERT("stereo", "mono");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     for (i = cvt->len_cvt / 8; i; --i, src += 2) {
         *(dst++) = (src[0] + src[1]) * 0.5f;
@@ -131,7 +133,7 @@ SDL_Convert51ToStereo_AVX(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     const __m256 half = _mm256_set1_ps(0.5f);
 
     LOG_DEBUG_CONVERT("5.1", "stereo (using AVX)");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     /* SDL's 5.1 layout: FL+FR+FC+LFE+BL+BR */
     while (i >= 4) {
@@ -198,7 +200,7 @@ SDL_Convert51ToStereo_SSE(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     const __m128 half = _mm_set1_ps(0.5f);
 
     LOG_DEBUG_CONVERT("5.1", "stereo (using SSE)");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     /* SDL's 5.1 layout: FL+FR+FC+LFE+BL+BR */
     /* Just use unaligned load/stores, if the memory at runtime is */
@@ -255,7 +257,7 @@ SDL_Convert51ToStereo(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     const float two_fifths = 1.0f / 2.5f;
 
     LOG_DEBUG_CONVERT("5.1", "stereo");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     /* SDL's 5.1 layout: FL+FR+FC+LFE+BL+BR */
     for (i = cvt->len_cvt / (sizeof (float) * 6); i; --i, src += 6, dst += 2) {
@@ -280,7 +282,7 @@ SDL_ConvertQuadToStereo(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     int i;
 
     LOG_DEBUG_CONVERT("quad", "stereo");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     for (i = cvt->len_cvt / (sizeof (float) * 4); i; --i, src += 4, dst += 2) {
         dst[0] = (src[0] + src[2]) * 0.5f; /* left */
@@ -304,7 +306,7 @@ SDL_Convert71To51(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     const float two_thirds = 1.0f / 1.5f;
 
     LOG_DEBUG_CONVERT("7.1", "5.1");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     for (i = cvt->len_cvt / (sizeof (float) * 8); i; --i, src += 8, dst += 6) {
         const float surround_left_distributed = src[6] * 0.5f;
@@ -335,7 +337,7 @@ SDL_Convert51ToQuad(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     const float two_thirds = 1.0f / 1.5f;
 
     LOG_DEBUG_CONVERT("5.1", "quad");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     /* SDL's 4.0 layout: FL+FR+BL+BR */
     /* SDL's 5.1 layout: FL+FR+FC+LFE+BL+BR */
@@ -364,7 +366,7 @@ SDL_ConvertMonoToStereo(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     int i;
 
     LOG_DEBUG_CONVERT("mono", "stereo");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     for (i = cvt->len_cvt / sizeof (float); i; --i) {
         src--;
@@ -389,7 +391,7 @@ SDL_ConvertStereoTo51(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     float *dst = (float *) (cvt->buf + cvt->len_cvt * 3);
 
     LOG_DEBUG_CONVERT("stereo", "5.1");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     for (i = cvt->len_cvt / (sizeof(float) * 2); i; --i) {
         dst -= 6;
@@ -422,8 +424,8 @@ SDL_ConvertQuadTo51(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     float *dst = (float *) (cvt->buf + cvt->len_cvt * 3 / 2);
 
     LOG_DEBUG_CONVERT("quad", "5.1");
-    SDL_assert(format == AUDIO_F32SYS);
-    SDL_assert(cvt->len_cvt % (sizeof(float) * 4) == 0);
+    assert(format == AUDIO_F32SYS);
+    assert(cvt->len_cvt % (sizeof(float) * 4) == 0);
 
     for (i = cvt->len_cvt / (sizeof(float) * 4); i; --i) {
         dst -= 6;
@@ -458,7 +460,7 @@ SDL_ConvertStereoToQuad(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     int i;
 
     LOG_DEBUG_CONVERT("stereo", "quad");
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     for (i = cvt->len_cvt / (sizeof(float) * 2); i; --i) {
         dst -= 4;
@@ -488,8 +490,8 @@ SDL_Convert51To71(SDL_AudioCVT * cvt, SDL_AudioFormat format)
     float *dst = (float *) (cvt->buf + cvt->len_cvt * 4 / 3);
 
     LOG_DEBUG_CONVERT("5.1", "7.1");
-    SDL_assert(format == AUDIO_F32SYS);
-    SDL_assert(cvt->len_cvt % (sizeof(float) * 6) == 0);
+    assert(format == AUDIO_F32SYS);
+    assert(cvt->len_cvt % (sizeof(float) * 6) == 0);
 
     for (i = cvt->len_cvt / (sizeof(float) * 6); i; --i) {
         dst -= 8;
@@ -691,7 +693,7 @@ SDL_ConvertAudio(SDL_AudioCVT * cvt)
 
     /* Make sure there's data to convert */
     if (cvt->buf == NULL) {
-        return SDL_SetError("No buffer allocated for conversion");
+        return printf("No buffer allocated for conversion");
     }
 
     /* Return okay if no conversion is necessary */
@@ -730,7 +732,7 @@ SDL_Convert_Byteswap(SDL_AudioCVT *cvt, SDL_AudioFormat format)
 
         #undef CASESWAP
 
-        default: SDL_assert(!"unhandled byteswap datatype!"); break;
+        default: assert(!"unhandled byteswap datatype!"); break;
     }
 
     if (cvt->filters[++cvt->filter_index]) {
@@ -748,10 +750,10 @@ static int
 SDL_AddAudioCVTFilter(SDL_AudioCVT *cvt, const SDL_AudioFilter filter)
 {
     if (cvt->filter_index >= SDL_AUDIOCVT_MAX_FILTERS) {
-        return SDL_SetError("Too many filters needed for conversion, exceeded maximum of %d", SDL_AUDIOCVT_MAX_FILTERS);
+        return printf("Too many filters needed for conversion, exceeded maximum of %d", SDL_AUDIOCVT_MAX_FILTERS);
     }
     if (filter == NULL) {
-        return SDL_SetError("Audio filter pointer is NULL");
+        return printf("Audio filter pointer is NULL");
     }
     cvt->filters[cvt->filter_index++] = filter;
     cvt->filters[cvt->filter_index] = NULL; /* Moving terminator */
@@ -781,11 +783,11 @@ SDL_BuildAudioTypeCVTToFloat(SDL_AudioCVT *cvt, const SDL_AudioFormat src_fmt)
             case AUDIO_S16: filter = SDL_Convert_S16_to_F32; break;
             case AUDIO_U16: filter = SDL_Convert_U16_to_F32; break;
             case AUDIO_S32: filter = SDL_Convert_S32_to_F32; break;
-            default: SDL_assert(!"Unexpected audio format!"); break;
+            default: assert(!"Unexpected audio format!"); break;
         }
 
         if (!filter) {
-            return SDL_SetError("No conversion from source format to float available");
+            return printf("No conversion from source format to float available");
         }
 
         if (SDL_AddAudioCVTFilter(cvt, filter) < 0) {
@@ -820,11 +822,11 @@ SDL_BuildAudioTypeCVTFromFloat(SDL_AudioCVT *cvt, const SDL_AudioFormat dst_fmt)
             case AUDIO_S16: filter = SDL_Convert_F32_to_S16; break;
             case AUDIO_U16: filter = SDL_Convert_F32_to_U16; break;
             case AUDIO_S32: filter = SDL_Convert_F32_to_S32; break;
-            default: SDL_assert(!"Unexpected audio format!"); break;
+            default: assert(!"Unexpected audio format!"); break;
         }
 
         if (!filter) {
-            return SDL_SetError("No conversion from float to format 0x%.4x available", dst_fmt);
+            return printf("No conversion from float to format 0x%.4x available", dst_fmt);
         }
 
         if (SDL_AddAudioCVTFilter(cvt, filter) < 0) {
@@ -874,7 +876,7 @@ SDL_ResampleCVT(SDL_AudioCVT *cvt, const int chans, const SDL_AudioFormat format
     } else {
         paddingsamples = 0;
     }
-    SDL_assert(format == AUDIO_F32SYS);
+    assert(format == AUDIO_F32SYS);
 
     /* we keep no streaming state here, so pad with silence on both ends. */
     padding = (float *) SDL_calloc(paddingsamples ? paddingsamples : 1, sizeof (float));
@@ -937,7 +939,7 @@ SDL_BuildAudioResampleCVT(SDL_AudioCVT * cvt, const int dst_channels,
 
     filter = ChooseCVTResampler(dst_channels);
     if (filter == NULL) {
-        return SDL_SetError("No conversion available for these rates");
+        return printf("No conversion available for these rates");
     }
 
     if (SDL_PrepareResampleFilter() < 0) {
@@ -953,7 +955,7 @@ SDL_BuildAudioResampleCVT(SDL_AudioCVT * cvt, const int dst_channels,
        !!! FIXME in 2.1:   We need to store data for this resampler, because the cvt structure doesn't store the original sample rates,
        !!! FIXME in 2.1:   so we steal the ninth and tenth slot.  :( */
     if (cvt->filter_index >= (SDL_AUDIOCVT_MAX_FILTERS-2)) {
-        return SDL_SetError("Too many filters needed for conversion, exceeded maximum of %d", SDL_AUDIOCVT_MAX_FILTERS-2);
+        return printf("Too many filters needed for conversion, exceeded maximum of %d", SDL_AUDIOCVT_MAX_FILTERS-2);
     }
     cvt->filters[SDL_AUDIOCVT_MAX_FILTERS-1] = (SDL_AudioFilter) (uintptr_t) src_rate;
     cvt->filters[SDL_AUDIOCVT_MAX_FILTERS] = (SDL_AudioFilter) (uintptr_t) dst_rate;
@@ -1020,7 +1022,7 @@ SDL_SupportedChannelCount(const int channels)
    Returns 0 if no conversion is needed, 1 if the audio filter is set up,
    or -1 if an error like invalid parameter, unsupported format, etc. occurred.
 */
-
+///////////~~~
 int
 SDL_BuildAudioCVT(SDL_AudioCVT * cvt,
                   SDL_AudioFormat src_fmt, Uint8 src_channels, int src_rate,
@@ -1035,21 +1037,21 @@ SDL_BuildAudioCVT(SDL_AudioCVT * cvt,
     SDL_zerop(cvt);
 
     if (!SDL_SupportedAudioFormat(src_fmt)) {
-        return SDL_SetError("Invalid source format");
+        return printf("Invalid source format");
     } else if (!SDL_SupportedAudioFormat(dst_fmt)) {
-        return SDL_SetError("Invalid destination format");
+        return printf("Invalid destination format");
     } else if (!SDL_SupportedChannelCount(src_channels)) {
-        return SDL_SetError("Invalid source channels");
+        return printf("Invalid source channels");
     } else if (!SDL_SupportedChannelCount(dst_channels)) {
-        return SDL_SetError("Invalid destination channels");
+        return printf("Invalid destination channels");
     } else if (src_rate <= 0) {
-        return SDL_SetError("Source rate is equal to or less than zero");
+        return printf("Source rate is equal to or less than zero");
     } else if (dst_rate <= 0) {
-        return SDL_SetError("Destination rate is equal to or less than zero");
+        return printf("Destination rate is equal to or less than zero");
     } else if (src_rate >= SDL_MAX_SINT32 / RESAMPLER_SAMPLES_PER_ZERO_CROSSING) {
-        return SDL_SetError("Source rate is too high");
+        return printf("Source rate is too high");
     } else if (dst_rate >= SDL_MAX_SINT32 / RESAMPLER_SAMPLES_PER_ZERO_CROSSING) {
-        return SDL_SetError("Destination rate is too high");
+        return printf("Destination rate is too high");
     }
 
 #if DEBUG_CONVERT
@@ -1234,9 +1236,9 @@ SDL_BuildAudioCVT(SDL_AudioCVT * cvt,
     if (src_channels != dst_channels) {
         /* All combinations of supported channel counts should have been
            handled by now, but let's be defensive */
-      return SDL_SetError("Invalid channel combination");
+      return printf("Invalid channel combination");
     }
-    
+
     /* Do rate conversion, if necessary. Updates (cvt). */
     if (SDL_BuildAudioResampleCVT(cvt, dst_channels, src_rate, dst_rate) < 0) {
         return -1;              /* shouldn't happen, but just in case... */
@@ -1319,7 +1321,7 @@ SDL_ResampleAudioStream_SRC(SDL_AudioStream *stream, const void *_inbuf, const i
     SRC_DATA data;
     int result;
 
-    SDL_assert(inbuf != ((const float *) outbuf));  /* SDL_AudioStreamPut() shouldn't allow in-place resamples. */
+    assert(inbuf != ((const float *) outbuf));  /* SDL_AudioStreamPut() shouldn't allow in-place resamples. */
 
     data.data_in = (float *)inbuf; /* Older versions of libsamplerate had a non-const pointer, but didn't write to it */
     data.input_frames = inbuflen / framelen;
@@ -1333,12 +1335,12 @@ SDL_ResampleAudioStream_SRC(SDL_AudioStream *stream, const void *_inbuf, const i
 
     result = SRC_src_process(state, &data);
     if (result != 0) {
-        SDL_SetError("src_process() failed: %s", SRC_src_strerror(result));
+        printf("src_process() failed: %s", SRC_src_strerror(result));
         return 0;
     }
 
     /* If this fails, we need to store them off somewhere */
-    SDL_assert(data.input_frames_used == data.input_frames);
+    assert(data.input_frames_used == data.input_frames);
 
     return data.output_frames_gen * (sizeof(float) * stream->pre_resample_channels);
 }
@@ -1372,7 +1374,7 @@ SetupLibSampleRateResampling(SDL_AudioStream *stream)
     if (SRC_available) {
         state = SRC_src_new(SRC_converter, stream->pre_resample_channels, &result);
         if (!state) {
-            SDL_SetError("src_new() failed: %s", SRC_src_strerror(result));
+            printf("src_new() failed: %s", SRC_src_strerror(result));
         }
     }
 
@@ -1407,7 +1409,7 @@ SDL_ResampleAudioStream(SDL_AudioStream *stream, const void *_inbuf, const int i
     const int cpy = SDL_min(inbuflen, paddingbytes);
     int retval;
 
-    SDL_assert(inbuf != ((const float *) outbuf));  /* SDL_AudioStreamPut() shouldn't allow in-place resamples. */
+    assert(inbuf != ((const float *) outbuf));  /* SDL_AudioStreamPut() shouldn't allow in-place resamples. */
 
     retval = SDL_ResampleAudio(chans, inrate, outrate, lpadding, rpadding, inbuf, inbuflen, outbuf, outbuflen);
 
@@ -1489,14 +1491,14 @@ SDL_NewAudioStream(const SDL_AudioFormat src_format,
         retval->cvt_before_resampling.needed = SDL_FALSE;
         if (SDL_BuildAudioCVT(&retval->cvt_after_resampling, src_format, src_channels, dst_rate, dst_format, dst_channels, dst_rate) < 0) {
             SDL_FreeAudioStream(retval);
-            return NULL;  /* SDL_BuildAudioCVT should have called SDL_SetError. */
+            return NULL;  /* SDL_BuildAudioCVT should have called printf. */
         }
     } else {
         /* Don't resample at first. Just get us to Float32 format. */
         /* !!! FIXME: convert to int32 on devices without hardware float. */
         if (SDL_BuildAudioCVT(&retval->cvt_before_resampling, src_format, src_channels, src_rate, AUDIO_F32SYS, pre_resample_channels, src_rate) < 0) {
             SDL_FreeAudioStream(retval);
-            return NULL;  /* SDL_BuildAudioCVT should have called SDL_SetError. */
+            return NULL;  /* SDL_BuildAudioCVT should have called printf. */
         }
 
 #ifdef HAVE_LIBSAMPLERATE_H
@@ -1526,19 +1528,20 @@ SDL_NewAudioStream(const SDL_AudioFormat src_format,
         /* Convert us to the final format after resampling. */
         if (SDL_BuildAudioCVT(&retval->cvt_after_resampling, AUDIO_F32SYS, pre_resample_channels, dst_rate, dst_format, dst_channels, dst_rate) < 0) {
             SDL_FreeAudioStream(retval);
-            return NULL;  /* SDL_BuildAudioCVT should have called SDL_SetError. */
+            return NULL;  /* SDL_BuildAudioCVT should have called printf. */
         }
     }
 
     retval->queue = SDL_NewDataQueue(packetlen, packetlen * 2);
     if (!retval->queue) {
         SDL_FreeAudioStream(retval);
-        return NULL;  /* SDL_NewDataQueue should have called SDL_SetError. */
+        return NULL;  /* SDL_NewDataQueue should have called printf. */
     }
 
     return retval;
 }
 
+///////////~~~
 static int
 SDL_AudioStreamPutInternal(SDL_AudioStream *stream, const void *buf, int len, int *maxputbytes)
 {
@@ -1628,7 +1631,7 @@ SDL_AudioStreamPutInternal(SDL_AudioStream *stream, const void *buf, int len, in
         SDL_memcpy(stream->resampler_padding, workbuf + (buflen - neededpaddingbytes), neededpaddingbytes);
 
         resamplebuf = workbuf + buflen;  /* skip to second piece of workbuf. */
-        SDL_assert(buflen >= neededpaddingbytes);
+        assert(buflen >= neededpaddingbytes);
         if (buflen > neededpaddingbytes) {
             buflen = stream->resampler_func(stream, workbuf, buflen - neededpaddingbytes, resamplebuf, resamplebuflen);
         } else {
@@ -1690,7 +1693,7 @@ SDL_AudioStreamPut(SDL_AudioStream *stream, const void *buf, int len)
     } else if (len == 0) {
         return 0;  /* nothing to do. */
     } else if ((len % stream->src_sample_frame_size) != 0) {
-        return SDL_SetError("Can't add partial sample frames");
+        return printf("Can't add partial sample frames");
     }
 
     if (!stream->cvt_before_resampling.needed &&
@@ -1718,10 +1721,10 @@ SDL_AudioStreamPut(SDL_AudioStream *stream, const void *buf, int len)
             stream->staging_buffer_filled += len;
             return 0;
         }
- 
+
         /* Fill the staging buffer, process it, and continue */
         amount = (stream->staging_buffer_size - stream->staging_buffer_filled);
-        SDL_assert(amount > 0);
+        assert(amount > 0);
         SDL_memcpy(stream->staging_buffer + stream->staging_buffer_filled, buf, amount);
         stream->staging_buffer_filled = 0;
         if (SDL_AudioStreamPutInternal(stream, stream->staging_buffer, stream->staging_buffer_size, NULL) < 0) {
@@ -1744,7 +1747,7 @@ int SDL_AudioStreamFlush(SDL_AudioStream *stream)
     #endif
 
     /* shouldn't use a staging buffer if we're not resampling. */
-    SDL_assert((stream->dst_rate != stream->src_rate) || (stream->staging_buffer_filled == 0));
+    assert((stream->dst_rate != stream->src_rate) || (stream->staging_buffer_filled == 0));
 
     if (stream->staging_buffer_filled > 0) {
         /* push the staging buffer + silence. We need to flush out not just
@@ -1800,7 +1803,7 @@ SDL_AudioStreamGet(SDL_AudioStream *stream, void *buf, int len)
     } else if (len <= 0) {
         return 0;  /* nothing to do. */
     } else if ((len % stream->dst_sample_frame_size) != 0) {
-        return SDL_SetError("Can't request partial sample frames");
+        return printf("Can't request partial sample frames");
     }
 
     return (int) SDL_ReadFromDataQueue(stream->queue, buf, len);
