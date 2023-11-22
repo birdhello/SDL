@@ -89,7 +89,7 @@ endif
 
 LOCAL_STATIC_LIBRARIES := cpufeatures
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 
 ###########################
