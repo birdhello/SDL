@@ -349,7 +349,7 @@ SDL_MixAudioFormat(Uint8 * dst, const Uint8 * src, SDL_AudioFormat format,
         break;
 
     default:                   /* If this happens... FIXME! */
-        SDL_SetError("SDL_MixAudioFormat(): unknown audio format");
+        printf("SDL_MixAudioFormat(): unknown audio format");
         return;
     }
 }

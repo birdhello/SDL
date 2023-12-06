@@ -24,6 +24,8 @@
 #include "SDL_audio_c.h"
 #include "SDL_cpuinfo.h"
 
+#include <assert.h>
+
 #ifdef __ARM_NEON
 #define HAVE_NEON_INTRINSICS 1
 #endif
@@ -307,7 +309,7 @@ SDL_Convert_S8_to_F32_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 15; dst -= 15;  /* adjust to read SSE blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -366,7 +368,7 @@ SDL_Convert_U8_to_F32_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 15; dst -= 15;  /* adjust to read SSE blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -427,7 +429,7 @@ SDL_Convert_S16_to_F32_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 7; dst -= 7;  /* adjust to read SSE blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -475,7 +477,7 @@ SDL_Convert_U16_to_F32_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 7; dst -= 7;  /* adjust to read SSE blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -523,7 +525,7 @@ SDL_Convert_S32_to_F32_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         *dst = ((float) (*src>>8)) * DIVBY8388607;
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -570,7 +572,7 @@ SDL_Convert_F32_to_S8_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -630,7 +632,7 @@ SDL_Convert_F32_to_U8_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -690,7 +692,7 @@ SDL_Convert_F32_to_S16_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -748,7 +750,7 @@ SDL_Convert_F32_to_U16_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -814,8 +816,8 @@ SDL_Convert_F32_to_S32_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
-    SDL_assert(!i || ((((size_t) src) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) src) & 15) == 0));
 
     {
         /* Aligned! Do SSE blocks as long as we have 16 bytes available. */
@@ -866,7 +868,7 @@ SDL_Convert_S8_to_F32_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 15; dst -= 15;  /* adjust to read NEON blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -917,7 +919,7 @@ SDL_Convert_U8_to_F32_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 15; dst -= 15;  /* adjust to read NEON blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -969,7 +971,7 @@ SDL_Convert_S16_to_F32_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 7; dst -= 7;  /* adjust to read NEON blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -1013,7 +1015,7 @@ SDL_Convert_U16_to_F32_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
     }
 
     src -= 7; dst -= 7;  /* adjust to read NEON blocks from the start. */
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -1057,7 +1059,7 @@ SDL_Convert_S32_to_F32_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         *dst = ((float) (*src>>8)) * DIVBY8388607;
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -1104,7 +1106,7 @@ SDL_Convert_F32_to_S8_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -1166,7 +1168,7 @@ SDL_Convert_F32_to_U8_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -1229,7 +1231,7 @@ SDL_Convert_F32_to_S16_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -1287,7 +1289,7 @@ SDL_Convert_F32_to_U16_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
 
     /* Make sure src is aligned too. */
     if ((((size_t) src) & 15) == 0) {
@@ -1345,8 +1347,8 @@ SDL_Convert_F32_to_S32_NEON(SDL_AudioCVT *cvt, SDL_AudioFormat format)
         }
     }
 
-    SDL_assert(!i || ((((size_t) dst) & 15) == 0));
-    SDL_assert(!i || ((((size_t) src) & 15) == 0));
+    assert(!i || ((((size_t) dst) & 15) == 0));
+    assert(!i || ((((size_t) src) & 15) == 0));
 
     {
         /* Aligned! Do NEON blocks as long as we have 16 bytes available. */
@@ -1423,7 +1425,7 @@ void SDL_ChooseAudioConverters(void)
 
 #undef SET_CONVERTER_FUNCS
 
-    SDL_assert(converters_chosen == SDL_TRUE);
+    assert(converters_chosen == SDL_TRUE);
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

@@ -18,6 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+#include <assert.h>
 #ifdef TEST_MAIN
 #include "SDL_config.h"
 #else
@@ -39,7 +40,7 @@
 /* CPU feature detection for SDL */
 
 #include "SDL_cpuinfo.h"
-#include "SDL_assert.h"
+#include "assert.h"
 
 #ifdef HAVE_SYSCONF
 #include <unistd.h>
@@ -1050,7 +1051,7 @@ SDL_SIMDGetAlignment(void)
     if (SDL_SIMDAlignment == 0xFFFFFFFF) {
         SDL_GetCPUFeatures();  /* make sure this has been calculated */
     }
-    SDL_assert(SDL_SIMDAlignment != 0);
+    assert(SDL_SIMDAlignment != 0);
     return SDL_SIMDAlignment;
 }
 

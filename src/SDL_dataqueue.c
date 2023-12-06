@@ -23,6 +23,8 @@
 #include "SDL.h"
 #include "./SDL_dataqueue.h"
 
+#include <assert.h>
+
 typedef struct SDL_DataQueuePacket
 {
     size_t datalen;  /* bytes currently in use in this packet. */
@@ -141,7 +143,7 @@ AllocateDataQueuePacket(SDL_DataQueue *queue)
 {
     SDL_DataQueuePacket *packet;
 
-    SDL_assert(queue != NULL);
+    assert(queue != NULL);
 
     packet = queue->pool;
     if (packet != NULL) {
@@ -159,7 +161,7 @@ AllocateDataQueuePacket(SDL_DataQueue *queue)
     packet->startpos = 0;
     packet->next = NULL;
                 
-    SDL_assert((queue->head != NULL) == (queue->queued_bytes != 0));
+    assert((queue->head != NULL) == (queue->queued_bytes != 0));
     if (queue->tail == NULL) {
         queue->head = packet;
     } else {
@@ -191,7 +193,7 @@ SDL_WriteToDataQueue(SDL_DataQueue *queue, const void *_data, const size_t _len)
 
     while (len > 0) {
         SDL_DataQueuePacket *packet = queue->tail;
-        SDL_assert(!packet || (packet->datalen <= packet_size));
+        assert(!packet || (packet->datalen <= packet_size));
         if (!packet || (packet->datalen >= packet_size)) {
             /* tail packet missing or completely full; we need a new packet. */
             packet = AllocateDataQueuePacket(queue);
@@ -239,7 +241,7 @@ SDL_PeekIntoDataQueue(SDL_DataQueue *queue, void *_buf, const size_t _len)
     for (packet = queue->head; len && packet; packet = packet->next) {
         const size_t avail = packet->datalen - packet->startpos;
         const size_t cpy = SDL_min(len, avail);
-        SDL_assert(queue->queued_bytes >= avail);
+        assert(queue->queued_bytes >= avail);
 
         SDL_memcpy(ptr, packet->data + packet->startpos, cpy);
         ptr += cpy;
@@ -264,7 +266,7 @@ SDL_ReadFromDataQueue(SDL_DataQueue *queue, void *_buf, const size_t _len)
     while ((len > 0) && ((packet = queue->head) != NULL)) {
         const size_t avail = packet->datalen - packet->startpos;
         const size_t cpy = SDL_min(len, avail);
-        SDL_assert(queue->queued_bytes >= avail);
+        assert(queue->queued_bytes >= avail);
 
         SDL_memcpy(ptr, packet->data + packet->startpos, cpy);
         packet->startpos += cpy;
@@ -274,13 +276,13 @@ SDL_ReadFromDataQueue(SDL_DataQueue *queue, void *_buf, const size_t _len)
 
         if (packet->startpos == packet->datalen) {  /* packet is done, put it in the pool. */
             queue->head = packet->next;
-            SDL_assert((packet->next != NULL) || (packet == queue->tail));
+            assert((packet->next != NULL) || (packet == queue->tail));
             packet->next = queue->pool;
             queue->pool = packet;
         }
     }
 
-    SDL_assert((queue->head != NULL) == (queue->queued_bytes != 0));
+    assert((queue->head != NULL) == (queue->queued_bytes != 0));
 
     if (queue->head == NULL) {
         queue->tail = NULL;  /* in case we drained the queue entirely. */
@@ -307,7 +309,7 @@ SDL_ReserveSpaceInDataQueue(SDL_DataQueue *queue, const size_t len)
         SDL_InvalidParamError("len");
         return NULL;
     } else if (len > queue->packet_size) {
-        SDL_SetError("len is larger than packet size");
+        printf("len is larger than packet size");
         return NULL;
     }
 
